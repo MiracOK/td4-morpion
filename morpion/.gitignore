@@ -36,3 +36,4 @@ coverage
 __screenshots__/
 
 package-lock.json
+.env

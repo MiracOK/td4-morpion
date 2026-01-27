@@ -4,4 +4,6 @@
 ### Option de lancement : 
  ``cd morpion``
 ### Ensuite : 
- ``npm run dev``
+``npm install``
+### Puis : 
+``npm run dev``
