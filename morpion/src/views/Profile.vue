@@ -22,6 +22,7 @@ export default {
       try {
         const response = await api.put('/api/profile', this.user)
         this.user = response.data
+        console.log(response.data)
       } catch (err) {
         if (err.response && err.response.data && err.response.data.errors) {
           this.errors = err.response.data.errors

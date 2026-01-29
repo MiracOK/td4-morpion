@@ -1,20 +1,17 @@
 import axios from 'axios'
+import key from '../../config.json'
+
 
 const baseURL = "https://morpion-api.edu.netlor.fr";
 const moveWsURL = "https://morpion-api.edu.netlor.fr/websockets";
-const keys = ["sjpa}YGYL_SU"];
+const apiKey = key.VITE_API_KEY;
 
-let key = null;
 let api = null;
-const setKey = (k) => {
-    console.log('api key set to %s', k)
-    key = k;
-}
 api = axios.create({
     baseURL: baseURL,
     headers: {
         'Content-Type': `application/json`,
-        'Authorization': `key=sjpa}YGYL_SU`
+        'Authorization': `key=${apiKey}`
     }
 })
 

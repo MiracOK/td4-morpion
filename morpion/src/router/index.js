@@ -1,5 +1,6 @@
 import Home from '@/views/Home.vue'
 import Profile from '@/views/Profile.vue'
+import Game from '@/views/Game.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
@@ -8,7 +9,7 @@ const router = createRouter({
     {path:'/home', name:'home', component: Home},
     {path:'/', name:'root', redirect: "/home"},
     {path:'/profile', name:'profile', component: Profile},
-    {path:'/games/:id', name:'game', component: Home},
+    {path:'/games/:id', name:'game', component: Game},
   ],
 })
 
