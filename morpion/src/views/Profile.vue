@@ -1,7 +1,10 @@
 <script>
 import { ref } from 'vue'
-import api from '@/api' 
+import api from '@/api'
+import ErrorAlert from '@/components/ErrorAlert.vue'
+
 export default {
+  components: { ErrorAlert },
   data() {
     return {
       user: null,
@@ -40,11 +43,9 @@ export default {
 <template>
   <h1>Profile</h1>
   <button @click="$router.push('/home')">Retour</button>
-  <div v-if="errors.length">
-    <ul>
-      <li v-for="err in errors" :key="err" style="color:red">{{ err }}</li>
-    </ul>
-  </div>
+  
+  <ErrorAlert :errors="errors" />
+
   <div v-if="user">
     <label>
       Nom :
