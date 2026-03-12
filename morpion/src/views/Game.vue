@@ -13,42 +13,23 @@ export default {
     }
   },
   computed: {
-    // Aplatit le board quel que soit son format retourné par l'API
+    // L'API stocke la grille en champs séparés r1c1...r3c3 avec valeurs 1/2/null
     flatBoard() {
-      if (!this.game) return []
-      const board = this.game.board
-      console.log('board reçu:', JSON.stringify(board))
-
-      // Pas encore de board (partie qui vient de commencer) → grille vide
-      if (!board) return Array(9).fill(null)
-
-      // Tableau 2D : [[x, o, null], ...]
-      if (Array.isArray(board) && Array.isArray(board[0])) {
-        return board.flat()
-      }
-
-      // Tableau 1D : [x, o, null, ...]
-      if (Array.isArray(board)) {
-        return board
-      }
-
-      // Objet avec clés numériques : {"0": [...], "1": [...], "2": [...]}
-      if (typeof board === 'object') {
-        const keys = Object.keys(board).sort((a, b) => Number(a) - Number(b))
-        const flat = []
-        for (const key of keys) {
-          const row = board[key]
-          if (Array.isArray(row)) flat.push(...row)
-          else flat.push(row)
-        }
-        return flat.length ? flat : Array(9).fill(null)
-      }
-
-      return Array(9).fill(null)
+      if (!this.game) return Array(9).fill('')
+      const g = this.game
+      const raw = [
+        g.r1c1, g.r1c2, g.r1c3,
+        g.r2c1, g.r2c2, g.r2c3,
+        g.r3c1, g.r3c2, g.r3c3
+      ]
+      // 1 → X, 2 → O, null/undefined → ''
+      return raw.map(v => v === 1 ? 'X' : v === 2 ? 'O' : '')
+    },
+    isGameOver() {
+      return this.game && this.game.state === 2
     },
     isMyTurn() {
       if (!this.game || !this.user) return false
-      // Comparaison en string pour éviter les problèmes number/string
       return String(this.game.next_player_id) === String(this.user.id)
     }
   },
@@ -182,15 +163,17 @@ export default {
       </div>
       
       <!-- Fin de partie -->
-      <div v-if="game.status == 2" style="background: #eee; padding: 20px; text-align: center; margin-top: 20px;">
+      <div v-if="isGameOver" style="background: #eee; padding: 20px; text-align: center; margin-top: 20px;">
         <h3>Partie terminée !</h3>
         <div v-if="game.winner_id">
              <span v-if="game.winner_id === user.id" style="color:green; font-weight:bold;">VOUS AVEZ GAGNÉ !</span>
-             <span v-else style="color:red; font-weight:bold;">{{ game.opponent.name }} A GAGNÉ !</span>
+             <span v-else style="color:red; font-weight:bold;">{{ game.winner ? game.winner.name : 'Adversaire' }} A GAGNÉ !</span>
         </div>
         <div v-else>
              <span style="font-weight:bold;">MATCH NUL !</span>
         </div>
+        <br>
+        <button @click="$router.push('/home')">Retour à l'accueil</button>
       </div>
 
       <!-- Grille de jeu (si partie en cours) -->
@@ -214,7 +197,7 @@ export default {
                 :key="index"
                 style="width: 60px; height: 60px; font-size: 24px; font-weight: bold; cursor: pointer;"
                 @click="play(index)"
-                :disabled="!!cell || !isMyTurn || game.status == 2"
+                :disabled="!!cell || !isMyTurn || isGameOver"
               >
                 {{ cell }}
               </button>
