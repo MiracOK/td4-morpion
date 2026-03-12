@@ -13,13 +13,38 @@ export default {
     }
   },
   computed: {
-    // Aplatit le board qu'il soit 1D [9] ou 2D [[3],[3],[3]]
+    // Aplatit le board quel que soit son format retourné par l'API
     flatBoard() {
-      if (!this.game || !this.game.board) return []
-      if (Array.isArray(this.game.board[0])) {
-        return this.game.board.flat()
+      if (!this.game) return []
+      const board = this.game.board
+      console.log('board reçu:', JSON.stringify(board))
+
+      // Pas encore de board (partie qui vient de commencer) → grille vide
+      if (!board) return Array(9).fill(null)
+
+      // Tableau 2D : [[x, o, null], ...]
+      if (Array.isArray(board) && Array.isArray(board[0])) {
+        return board.flat()
       }
-      return this.game.board
+
+      // Tableau 1D : [x, o, null, ...]
+      if (Array.isArray(board)) {
+        return board
+      }
+
+      // Objet avec clés numériques : {"0": [...], "1": [...], "2": [...]}
+      if (typeof board === 'object') {
+        const keys = Object.keys(board).sort((a, b) => Number(a) - Number(b))
+        const flat = []
+        for (const key of keys) {
+          const row = board[key]
+          if (Array.isArray(row)) flat.push(...row)
+          else flat.push(row)
+        }
+        return flat.length ? flat : Array(9).fill(null)
+      }
+
+      return Array(9).fill(null)
     },
     isMyTurn() {
       if (!this.game || !this.user) return false
