@@ -12,6 +12,21 @@ export default {
       ws: null
     }
   },
+  computed: {
+    // Aplatit le board qu'il soit 1D [9] ou 2D [[3],[3],[3]]
+    flatBoard() {
+      if (!this.game || !this.game.board) return []
+      if (Array.isArray(this.game.board[0])) {
+        return this.game.board.flat()
+      }
+      return this.game.board
+    },
+    isMyTurn() {
+      if (!this.game || !this.user) return false
+      // Comparaison en string pour éviter les problèmes number/string
+      return String(this.game.next_player_id) === String(this.user.id)
+    }
+  },
   async beforeRouteEnter(to, from, next) {
     try {
       // Récupérer l'id de la partie depuis les paramètres de la route
@@ -40,12 +55,19 @@ export default {
   },
 
   methods: {
+    async reloadGame() {
+      try {
+        const response = await api.get(`/api/games/${this.game.id}`)
+        this.game = response.data
+      } catch (e) {
+        console.error('Erreur rechargement partie:', e)
+      }
+    },
     waitForOpponentMove() {
       const wsURL = 'wss://morpion-api.edu.netlor.fr/websockets'
       this.ws = new WebSocket(wsURL)
       
       this.ws.onopen = () => {
-        // Envoyer le message de connexion
         const message = {
           action: 'connect',
           game_id: this.game.id,
@@ -58,27 +80,23 @@ export default {
         const data = JSON.parse(event.data)
         
         if (data.action === 'opponent-join') {
-          // L'adversaire a rejoint la partie
-          this.game.opponent = data.opponent
+          // Recharger la partie complète pour obtenir l'adversaire et le board initialisé
+          await this.reloadGame()
         } else if (data.action === 'opponent-play') {
-          // L'adversaire a joué une cellule
-          if (data.board) this.game.board = data.board
-          if (data.next_player_id) this.game.next_player_id = data.next_player_id
-
-          // Recharger la partie pour avoir le statut à jour
-          try {
-             const response = await api.get(`/api/games/${this.game.id}`)
-             this.game = response.data
-          } catch(e) { console.error(e) }
-
+          // Recharger la partie pour avoir le coup, le statut et next_player_id à jour
+          await this.reloadGame()
         } else if (data.action === 'opponent-quit') {
-          // L'adversaire a quitté la partie
-          this.errors.push("Votre adversaire a quitté la partie")
-          this.game.opponent = null
+          // Ne pas supprimer l'adversaire — il peut se reconnecter (ex: refresh)
+          // Juste afficher un avertissement temporaire
+          this.errors.push("Votre adversaire s'est déconnecté temporairement...")
+          // Effacer l'avertissement après 5 secondes
+          setTimeout(() => {
+            this.errors = this.errors.filter(e => e !== "Votre adversaire s'est déconnecté temporairement...")
+          }, 5000)
         }
       }
       
-      this.ws.onerror = (error) => {
+      this.ws.onerror = () => {
         this.errors.push("Erreur de connexion WebSocket")
       }
       
@@ -155,7 +173,7 @@ export default {
           <!-- Afficher qui doit jouer -->
           <div style="margin: 10px 0;">
             <strong>Au tour de :</strong>
-            <span v-if="game.next_player_id === user.id" style="color: blue; font-weight: bold;">
+            <span v-if="isMyTurn" style="color: blue; font-weight: bold;">
               Vous ({{ user.name }})
             </span>
             <span v-else>
@@ -165,17 +183,18 @@ export default {
           
           <div style="margin-top: 20px">
             <h2>Grille</h2>
-            <div style="display: grid; grid-template-columns: repeat(3, 50px); gap: 5px;">
+            <div v-if="flatBoard.length" style="display: grid; grid-template-columns: repeat(3, 60px); gap: 5px;">
               <button
-                v-for="(cell, index) in game.board"
+                v-for="(cell, index) in flatBoard"
                 :key="index"
-                style="width: 50px; height: 50px; font-size: 20px; font-weight: bold; cursor: pointer;"
+                style="width: 60px; height: 60px; font-size: 24px; font-weight: bold; cursor: pointer;"
                 @click="play(index)"
-                :disabled="!!cell || game.next_player_id !== user.id"
+                :disabled="!!cell || !isMyTurn || game.status == 2"
               >
                 {{ cell }}
               </button>
             </div>
+            <div v-else>Chargement de la grille...</div>
           </div>
       </div>
 
