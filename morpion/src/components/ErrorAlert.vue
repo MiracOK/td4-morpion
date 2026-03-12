@@ -19,16 +19,20 @@ export default {
 
 <style scoped>
 .error-alert {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-    padding: 10px;
-    margin-bottom: 15px;
-    border-radius: 4px;
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
 }
 
 ul {
     margin: 0;
-    padding-left: 20px;
+    padding-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 </style>
