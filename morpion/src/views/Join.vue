@@ -39,7 +39,7 @@ export default {
 <template>
   <div class="page">
     <div class="card">
-      <button class="back-btn" @click="$router.push('/home')">← Retour</button>
+      <button class="back-btn" @click="$router.push('/home')">Retour</button>
       <h1 class="title">Rejoindre une partie</h1>
       <p class="subtitle">Saisissez le code communiqué par votre ami</p>
 

@@ -157,7 +157,7 @@ export default {
 
       <!-- Attente adversaire -->
       <div v-if="!opponent" class="waiting">
-        ⏳ En attente d'un adversaire...
+        En attente d'un adversaire...
       </div>
 
       <!-- Partie en cours ou terminée -->
@@ -166,17 +166,17 @@ export default {
         <!-- Fin de partie -->
         <div v-if="isGameOver" class="result">
           <div v-if="game.winner_id">
-            <div v-if="String(game.winner_id) === String(user.id)" class="win">🏆 VOUS AVEZ GAGNÉ !</div>
-            <div v-else class="lose">😞 {{ game.winner ? game.winner.name : 'Adversaire' }} A GAGNÉ</div>
+            <div v-if="String(game.winner_id) === String(user.id)" class="win">VOUS AVEZ GAGNÉ !</div>
+            <div v-else class="lose">{{ game.winner ? game.winner.name : 'Adversaire' }} A GAGNÉ</div>
           </div>
-          <div v-else class="draw">🤝 MATCH NUL</div>
+          <div v-else class="draw">MATCH NUL</div>
           <button class="btn btn-home" @click="$router.push('/home')">Retour à l'accueil</button>
         </div>
 
         <!-- Partie en cours -->
         <div v-else>
           <div class="turn-indicator" :class="{ 'my-turn': isMyTurn }">
-            {{ isMyTurn ? '▶ C\'est votre tour !' : `▶ Tour de ${nextPlayerName}` }}
+            {{ isMyTurn ? 'C\'est votre tour !' : `Tour de ${nextPlayerName}` }}
           </div>
 
           <div class="board">

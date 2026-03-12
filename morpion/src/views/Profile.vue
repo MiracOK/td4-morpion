@@ -42,7 +42,7 @@ export default {
 <template>
   <div class="page">
     <div class="card">
-      <button class="back-btn" @click="$router.push('/home')">← Retour</button>
+      <button class="back-btn" @click="$router.push('/home')">Retour</button>
       <h1 class="title">Mon profil</h1>
 
       <ErrorAlert :errors="errors" />
