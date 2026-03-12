@@ -1,5 +1,4 @@
 <script>
-import { ref } from 'vue'
 import api from '@/api'
 import ErrorAlert from '@/components/ErrorAlert.vue'
 

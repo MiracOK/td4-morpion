@@ -26,8 +26,8 @@ export default {
   <h1>Morpion</h1>
  
   <nav>
-    <RouterLink @click="createGame()" to="/game">Jouer</RouterLink><br>
-    <RouterLink to="/join">Rejoindre</RouterLink><br>
-    <RouterLink to="/profile">Profile</RouterLink>
+    <button @click="createGame()">Nouvelle partie</button><br>
+    <RouterLink to="/join">Rejoindre une partie</RouterLink><br>
+    <RouterLink to="/profile">Mon profil</RouterLink>
   </nav>
   </template>

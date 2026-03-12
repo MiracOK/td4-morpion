@@ -20,7 +20,7 @@ export default {
 
       try {
         //  appel Ajax sur la route /api/games/:code/join
-        const response = await api.post(`/api/games/${this.gameCode}/join`)
+        const response = await api.patch(`/api/games/${this.gameCode}/join`)
         const gameId = response.data.id
         // Redirigez l’utilisateur vers la partie (/games/:id)
         this.$router.push({ name: 'game', params: { id: gameId } })

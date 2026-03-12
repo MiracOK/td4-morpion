@@ -88,8 +88,8 @@ export default {
     },
     async play(index) {
       this.errors = []
-      const row = Math.floor(index / 3)
-      const col = index % 3
+      const row = Math.floor(index / 3) + 1
+      const col = (index % 3) + 1
 
       try {
         const response = await api.patch(`/api/games/${this.game.id}/play/${row}/${col}`)
@@ -124,7 +124,7 @@ export default {
     
     <!-- Afficher le code de la partie -->
     <div>
-      <strong>Code de la partie :</strong> {{ game.id }}
+      <strong>Code de la partie :</strong> {{ game.code }}
     </div>
     
     <!-- Message d'attente si pas d'adversaire -->
